@@ -1,0 +1,176 @@
+openapi: 3.0.1
+info:
+  title: Course Management API
+  description: API for managing students and their groups in a school
+  version: 1.0.0
+servers:
+  - url: https://www.hschool.com
+    description: Production server
+  - url: https://mock-server.swaggerhub.com
+    description: Mock server
+
+paths:
+  /groups:
+    get:
+      summary: Show a list of groups
+      description: Get all groups or filter by "groupName" or "groupYear".
+      parameters:
+        - name: groupName
+          in: query
+          description: Filter by group name
+          schema:
+            type: string
+        - name: groupYear
+          in: query
+          description: Filter by group year
+          schema:
+            type: string
+            format: date
+      responses:
+        '200':
+          description: A list of all groups
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Group'
+    post:
+      summary: Add a new group
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Group'
+      responses:
+        '201':
+          description: Group created
+    put:
+      summary: Update a group
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Group'
+      responses:
+        '200':
+          description: Group updated
+    delete:
+      summary: Delete a group
+      parameters:
+        - name: groupID
+          in: query
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Group deleted
+
+  /students:
+    get:
+      summary: Retrieve a list of students
+      description: Get all students or filter by "studentName".
+      parameters:
+        - name: studentName
+          in: query
+          description: Filter by student's name
+          schema:
+            type: string
+      responses:
+        '200':
+          description: A list of students
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Student'
+    post:
+      summary: Add a new student
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Student'
+      responses:
+        '201':
+          description: Student created
+    put:
+      summary: Update a student
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Student'
+      responses:
+        '200':
+          description: Student updated
+    delete:
+      summary: Delete a student
+      parameters:
+        - name: studentID
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Student deleted
+
+components:
+  schemas:
+    Group:
+      type: object
+      properties:
+        groupID:
+          type: integer
+        groupName:
+          type: string
+          example: Group A
+        groupYear:
+          type: string
+          format: date
+          example: 2023-01-01
+        promotion:
+          type: string
+          enum:
+            - G
+            - H
+            - J
+            - K
+          example: G
+        studentNB:
+          type: integer
+          example: 25
+        students:
+          type: array
+          items:
+            $ref: '#/components/schemas/Student'
+    Student:
+      type: object
+      properties:
+        studentID:
+          type: string
+          pattern: '^std23\\d{2}$'
+          example: std2301
+        studentName:
+          type: string
+          example: John Doe
+        sex:
+          type: string
+          enum:
+            - M
+            - F
+          example: M
+        birthdate:
+          type: string
+          format: date
+          example: 2000-01-01
+        groupName:
+          type: string
+          example: Group A
